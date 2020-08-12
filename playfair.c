@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 									    to search for a letter */
 	}
 
-	for (int i = 0; i < strlen(argv[1]); i += 2)
+	for (size_t i = 0; i < strlen(argv[1]); i += 2)
 		COMPUTE(&ans, table, reftable[toupper(argv[1][i])-'A'], reftable[toupper(argv[1][i+1])-'A']);
 
 
