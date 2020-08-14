@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 		case 'h':
 			printf(
 					"Usage: %s -t <tablefile> {-d|-e} [-l <lowest character>] "
-					"[-W <tablewidth>] [-H <tableheight>]\n",
+					"[-W <tablewidth>] [-H <tableheight>] <message>\n",
 					argv[0]);
 			exit(0);
 		}
