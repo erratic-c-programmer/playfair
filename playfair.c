@@ -126,6 +126,7 @@ int main(int argc, char **argv)
 				table[i][j] = toupper(fgetc(tablefile));
 			fgetc(tablefile); /* Skip newline */
 		}
+		fclose(tablefile);
 	}
 	/* Done parsing options */
 	char *ans = calloc(strlen(msg)+1, sizeof(char));
