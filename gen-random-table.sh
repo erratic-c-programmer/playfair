@@ -1,3 +1,3 @@
 #! /bin/sh
-echo 'abcdefghijklmnoprstuvwxyz' | fold -w1 | shuf | tr -d '\n' | fold -w5
+echo '789:;<=>?@abcdefghijklmnopqrstuvwxyz' | fold -w1 | shuf | tr -d '\n' | fold -w6
 echo; echo

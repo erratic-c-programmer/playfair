@@ -26,18 +26,20 @@ int main(int argc, char **argv)
 	char *tablefile_name = "";
 	bool encode = true;
 	char *msg;
+	char lowestchar = 'A';
 
 	bool tflag = false;
 	bool edflag = false;
 	bool Wflag = false;
-	bool Hflag = true;
+	bool Hflag = false;
+	bool lflag = false;
 
 	extern int optind;
 	extern char *optarg;
 	char c;
 
 	/* Parsing options */
-	while ((c = getopt(argc, argv, "t:edWHh")) != -1) {
+	while ((c = getopt(argc, argv, "t:edl:W:H:h")) != -1) {
 		switch (c) {
 		case 't':
 			if (tflag)
@@ -63,17 +65,28 @@ int main(int argc, char **argv)
 		case 'W':
 			if (Wflag)
 				TOERR("[WARN] -W flag specified more than once.\n");
+			Wflag = true;
 			table_w = atoi(optarg);
 			break;
 
 		case 'H':
 			if (Hflag)
 				TOERR("[WARN] -H flag specified more than once.\n");
+			Hflag = true;
 			table_h = atoi(optarg);
 			break;
 
+		case 'l':
+			if (lflag)
+				TOERR("[WARN] -l flag specified more than once.\n");
+			lflag = true;
+			lowestchar = optarg[0];
+			break;
+
 		case 'h':
-			printf("Usage: %s -t <tablefile> {-d|-e} [-W <tablewidth>] [-H <tableheight>]\n",
+			printf(
+					"Usage: %s -t <tablefile> {-d|-e} [-l <lowest character>] "
+					"[-W <tablewidth>] [-H <tableheight>]\n",
 					argv[0]);
 			exit(0);
 		}
@@ -121,14 +134,14 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < table_h; i++) {
 		for (int j = 0; j < table_w; j++)
-			reftable[table[i][j]-'A'] = (struct pair){i, j};
+			reftable[table[i][j]-lowestchar] = (struct pair){i, j};
 	}
 
 	for (size_t i = 0; i < strlen(msg); i += 2) {
 		if (encode)
-			encrypt(&ans, table, reftable[toupper(msg[i])-'A'], reftable[toupper(msg[i+1])-'A']);
+			encrypt(&ans, table, reftable[toupper(msg[i])-lowestchar], reftable[toupper(msg[i+1])-lowestchar]);
 		else
-			decrypt(&ans, table, reftable[toupper(msg[i])-'A'], reftable[toupper(msg[i+1])-'A']);
+			decrypt(&ans, table, reftable[toupper(msg[i])-lowestchar], reftable[toupper(msg[i+1])-lowestchar]);
 	}
 
 	printf("%s\n", ans);
