@@ -14,7 +14,7 @@ struct pair {
 };
 
 static bool odd = false;
-static short int table_w = 5, table_h = 5;
+static short int table_w = 8, table_h = 8;
 
 void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
 void decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	char *tablefile_name = "";
 	bool encode = true;
 	char *msg;
-	char lowestchar = 'A';
+	char lowestchar = ' ';
 	struct pair *reftable;
 
 	char **table;
