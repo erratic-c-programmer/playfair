@@ -16,9 +16,6 @@ struct pair {
 static bool odd = false;
 static struct pair reftable[25];
 static short int table_w = 5, table_h = 5;
-#ifndef MAX_MSG_LEN
-#error Please specify -DMAX_MSG_LEN=XXX
-#endif
 
 void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
 void decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
@@ -26,7 +23,7 @@ void decrypt(char **result, char **table, struct pair firstletter, struct pair s
 int main(int argc, char **argv)
 {
 	FILE *tablefile;
-	char *tablefile_name;
+	char *tablefile_name = "";
 	bool encode = true;
 	char *msg;
 
