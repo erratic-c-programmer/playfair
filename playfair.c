@@ -14,7 +14,6 @@ struct pair {
 };
 
 static bool odd = false;
-static struct pair reftable[25];
 static short int table_w = 5, table_h = 5;
 
 void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
@@ -27,6 +26,9 @@ int main(int argc, char **argv)
 	bool encode = true;
 	char *msg;
 	char lowestchar = 'A';
+	struct pair *reftable;
+
+	char **table;
 
 	bool tflag = false;
 	bool edflag = false;
@@ -92,6 +94,11 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (!edflag) {
+		TOERR("[ERROR] At least one of -e (encode) or -d (decode) flags must be specified.  Bailing out!\n");
+		exit(1);
+	}
+
 	if (optind >= argc) {
 		TOERR("[ERROR] No message specified.  Bailing out!\n");
 		exit(1);
@@ -99,23 +106,19 @@ int main(int argc, char **argv)
 		msg = argv[optind];
 	}
 
-	if (!edflag) {
-		TOERR("[ERROR] One of -e (encode) or -d (decode) flags not specified.  Bailing out!\n");
-		exit(1);
-	}
-
-	char **table = malloc(table_h * sizeof(char*));
-	for (int i = 0; i < table_h; ++i)
-		table[i] = malloc(table_w * sizeof(char));
 
 	if (!tflag) {
 		TOERR("[ERROR] No tablefile specified.  Bailing out!\n");
 		exit(1);
 	}
-	if (access(optarg, F_OK) != -1) {
+	if (access(tablefile_name, F_OK) == -1) {
 		TOERR("[ERROR] File not found.  Bailing out!\n");
 		exit(2);
 	} else {
+		table = malloc(table_h * sizeof(char*));
+		for (int i = 0; i < table_h; ++i)
+		table[i] = malloc(table_w * sizeof(char));
+
 		printf("[NOTE] Using tablefile %s\n",  tablefile_name);
 		tablefile = fopen(tablefile_name, "r");
 		for (int i = 0; i < table_h; i++) {
@@ -132,6 +135,7 @@ int main(int argc, char **argv)
 		odd = true;
 	}
 
+	reftable = malloc(table_h * table_w * sizeof(struct pair));
 	for (int i = 0; i < table_h; i++) {
 		for (int j = 0; j < table_w; j++)
 			reftable[table[i][j]-lowestchar] = (struct pair){i, j};
@@ -150,6 +154,7 @@ int main(int argc, char **argv)
 		free(table[i]);
 	free(table);
 	free(ans);
+	free(reftable);
 
 	return 0;
 }
@@ -217,8 +222,4 @@ void decrypt(char **result, char **table, struct pair firstletter, struct pair s
 		strcat(*result, (char[2]){table [secondletter.first]
 				[firstletter.second], '\0'});
 	}
-}
-
-void usage(void)
-{
 }
