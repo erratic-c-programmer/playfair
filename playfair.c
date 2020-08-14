@@ -188,7 +188,7 @@ void decrypt(char **result, char **table, struct pair firstletter, struct pair s
 		else
 			strcat(*result, (char[2]){table[firstletter.first-1]
 					[firstletter.second], '\0'});
-		if (secondletter.first == 5-1) /* Wrap */
+		if (secondletter.first == 0) /* Wrap */
 			strcat(*result, (char[2]){table[table_h-1][secondletter.second], '\0'});
 		else
 			strcat(*result, (char[2]){table[secondletter.first-1]
