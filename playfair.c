@@ -29,15 +29,15 @@ int main(int argc, char **argv)
 
 	bool tflag = false;
 	bool edflag = false;
-	bool wflag = false;
-	bool hflag = true;
+	bool Wflag = false;
+	bool Hflag = true;
 
 	extern int optind;
 	extern char *optarg;
 	char c;
 
 	/* Parsing options */
-	while ((c = getopt(argc, argv, "t:edwh")) != -1) {
+	while ((c = getopt(argc, argv, "t:edWHh")) != -1) {
 		switch (c) {
 		case 't':
 			if (tflag)
@@ -60,17 +60,22 @@ int main(int argc, char **argv)
 			encode = false;
 			break;
 
-		case 'w':
-			if (wflag)
-				TOERR("[WARN] -w flag specified more than once.\n");
+		case 'W':
+			if (Wflag)
+				TOERR("[WARN] -W flag specified more than once.\n");
 			table_w = atoi(optarg);
 			break;
 
-		case 'h':
-			if (hflag)
-				TOERR("[WARN] -h flag specified more than once.\n");
+		case 'H':
+			if (Hflag)
+				TOERR("[WARN] -H flag specified more than once.\n");
 			table_h = atoi(optarg);
 			break;
+
+		case 'h':
+			printf("Usage: %s -t <tablefile> {-d|-e} [-W <tablewidth>] [-H <tableheight>]\n",
+					argv[0]);
+			exit(0);
 		}
 	}
 
@@ -199,4 +204,8 @@ void decrypt(char **result, char **table, struct pair firstletter, struct pair s
 		strcat(*result, (char[2]){table [secondletter.first]
 				[firstletter.second], '\0'});
 	}
+}
+
+void usage(void)
+{
 }
