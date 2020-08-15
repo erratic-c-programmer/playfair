@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 		tablefile = fopen(tablefile_name, "r");
 		for (int i = 0; i < table_h; i++) {
 			for (int j = 0; j < table_w; j++)
-				table[i][j] = toupper(fgetc(tablefile));
+				table[i][j] = fgetc(tablefile);
 			fgetc(tablefile); /* Skip newline */
 		}
 		fclose(tablefile);
@@ -144,9 +144,9 @@ int main(int argc, char **argv)
 
 	for (size_t i = 0; i < strlen(msg); i += 2) {
 		if (encode)
-			encrypt(&ans, table, reftable[toupper(msg[i])-lowestchar], reftable[toupper(msg[i+1])-lowestchar]);
+			encrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 		else
-			decrypt(&ans, table, reftable[toupper(msg[i])-lowestchar], reftable[toupper(msg[i+1])-lowestchar]);
+			decrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 	}
 
 	printf("%s\n", ans);
