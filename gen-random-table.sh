@@ -1,3 +1,3 @@
 #! /bin/sh
-echo ' !"#$%&'\''()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\\]^_' | fold -w1 | shuf | tr -d '\n' | fold -w8
+echo ' !"#$%&'\''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' | fold -w1 | shuf | tr -d '\n' | fold -w19
 echo; echo
