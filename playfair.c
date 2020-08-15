@@ -129,13 +129,11 @@ int main(int argc, char **argv)
 	}
 
 	/* Done parsing options */
+	ans = calloc(strlen(msg)+2, sizeof(char));
 
 	if (strlen(msg) % 2) {
 		TOERR("[WARN] Message length is odd.  Appending 'X'.\n");
 		msg[strlen(msg)] = 'X';
-		ans = calloc(strlen(msg)+2, sizeof(char));
-	} else {
-		ans = calloc(strlen(msg)+2, sizeof(char));
 	}
 
 	reftable = malloc(table_h * table_w * sizeof(struct pair));
