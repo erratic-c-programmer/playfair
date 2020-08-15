@@ -129,11 +129,11 @@ int main(int argc, char **argv)
 	}
 
 	/* Done parsing options */
-	ans = calloc(strlen(msg)+2, sizeof(char));
+	ans = calloc(strlen(msg)+4, sizeof(char));
 
 	if (strlen(msg) % 2) {
 		TOERR("[WARN] Message length is odd.  Appending 'X'.\n");
-		msg[strlen(msg)] = 'X';
+		strcat(msg, "X");
 	}
 
 	reftable = malloc(table_h * table_w * sizeof(struct pair));
@@ -147,6 +147,11 @@ int main(int argc, char **argv)
 			encrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 		else
 			decrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
+	}
+
+	if (ans[strlen(ans)-1] == ' ' && encode) {
+		TOERR("[WARN] last letter of encoded message is a space, appending XX.\n");
+		strcat(ans, "XX");
 	}
 
 	printf("%s\n", ans);
