@@ -13,7 +13,6 @@ struct pair {
 	int second;
 };
 
-static bool odd = false;
 static short int table_w = 19, table_h = 5;
 
 void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
@@ -25,6 +24,7 @@ int main(int argc, char **argv)
 	char *tablefile_name = "";
 	bool encode = true;
 	char *msg;
+	char *ans;
 	char lowestchar = ' ';
 	struct pair *reftable;
 
@@ -99,19 +99,10 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	if (optind >= argc) {
-		TOERR("[ERROR] No message specified.  Bailing out!\n");
-		exit(1);
-	} else {
-		msg = argv[optind];
-	}
-
-
 	if (!tflag) {
 		TOERR("[ERROR] No tablefile specified.  Bailing out!\n");
 		exit(1);
-	}
-	if (access(tablefile_name, F_OK) == -1) {
+	} else if (access(tablefile_name, F_OK) == -1) {
 		TOERR("[ERROR] File not found.  Bailing out!\n");
 		exit(2);
 	} else {
@@ -128,12 +119,23 @@ int main(int argc, char **argv)
 		}
 		fclose(tablefile);
 	}
+
+	if (optind >= argc) {
+		TOERR("[ERROR] No message specified.  Bailing out!\n");
+		exit(1);
+	} else {
+		msg = calloc(strlen(argv[optind])+2, sizeof(char));
+		strcpy(msg, argv[optind]);
+	}
+
 	/* Done parsing options */
-	char *ans = calloc(strlen(msg)+1, sizeof(char));
 
 	if (strlen(msg) % 2) {
-		TOERR("[WARN] Message length is odd.  Appending a random letter.\n");
-		odd = true;
+		TOERR("[WARN] Message length is odd.  Appending 'X'.\n");
+		msg[strlen(msg)] = 'X';
+		ans = calloc(strlen(msg)+2, sizeof(char));
+	} else {
+		ans = calloc(strlen(msg)+2, sizeof(char));
 	}
 
 	reftable = malloc(table_h * table_w * sizeof(struct pair));
@@ -142,7 +144,7 @@ int main(int argc, char **argv)
 			reftable[table[i][j]-lowestchar] = (struct pair){i, j};
 	}
 
-	for (size_t i = 0; i < strlen(msg); i += 2) {
+	for (size_t i = 0; i+1 < strlen(msg); i += 2) {
 		if (encode)
 			encrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 		else
@@ -155,6 +157,7 @@ int main(int argc, char **argv)
 		free(table[i]);
 	free(table);
 	free(ans);
+	free(msg);
 	free(reftable);
 
 	return 0;
