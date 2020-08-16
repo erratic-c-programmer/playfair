@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 	} else {
 		table = malloc(table_h * sizeof(char*));
 		for (int i = 0; i < table_h; ++i)
-		table[i] = malloc(table_w * sizeof(char));
+			table[i] = malloc(table_w * sizeof(char));
 
 		printf("[NOTE] Using tablefile %s\n",  tablefile_name);
 		tablefile = fopen(tablefile_name, "r");
