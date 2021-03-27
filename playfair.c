@@ -13,7 +13,7 @@ struct pair {
 	int second;
 };
 
-static short int table_w = 19, table_h = 5;
+static short int table_w = 12, table_h = 8;
 
 void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
 void decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
