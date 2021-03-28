@@ -6,8 +6,6 @@
 #include <errno.h>
 #include <unistd.h>
 
-typedef unsigned char uchar;
-
 #define TOERR(m) fprintf(stderr, m)
 
 struct pair {
@@ -17,20 +15,20 @@ struct pair {
 
 static short int table_w = 12, table_h = 8;
 
-void encrypt(uchar **result, char **table, struct pair firstletter, struct pair secondletter);
-void decrypt(uchar **result, char **table, struct pair firstletter, struct pair secondletter);
+void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
+void decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
 
-int main(int argc, uchar **argv)
+int main(int argc, char **argv)
 {
 	FILE *tablefile;
-	uchar *tablefile_name = "";
+	char *tablefile_name = "";
 	bool encode = true;
-	uchar *msg;
-	uchar *ans;
-	uchar lowestchar = ' ';
+	char *msg;
+	char *ans;
+	char lowestchar = ' ';
 	struct pair *reftable;
 
-	uchar **table;
+	char **table;
 
 	bool tflag = false;
 	bool edflag = false;
@@ -39,8 +37,8 @@ int main(int argc, uchar **argv)
 	bool lflag = false;
 
 	extern int optind;
-	extern uchar *optarg;
-	uchar c;
+	extern char *optarg;
+	char c;
 
 	/* Parsing options */
 	while ((c = getopt(argc, argv, "t:edl:W:H:h")) != -1) {
@@ -84,12 +82,12 @@ int main(int argc, uchar **argv)
 			if (lflag)
 				TOERR("[WARN] -l flag specified more than once.\n");
 			lflag = true;
-			lowestuchar = optarg[0];
+			lowestchar = optarg[0];
 			break;
 
 		case 'h':
 			printf(
-					"Usage: %s -t <tablefile> {-d|-e} [-l <lowest ucharacter>] "
+					"Usage: %s -t <tablefile> {-d|-e} [-l <lowest character>] "
 					"[-W <tablewidth>] [-H <tableheight>] <message>\n",
 					argv[0]);
 			exit(0);
@@ -108,9 +106,9 @@ int main(int argc, uchar **argv)
 		TOERR("[ERROR] File not found.  Bailing out!\n");
 		exit(2);
 	} else {
-		table = malloc(table_h * sizeof(uchar*));
+		table = malloc(table_h * sizeof(char*));
 		for (int i = 0; i < table_h; ++i)
-			table[i] = malloc(table_w * sizeof(uchar));
+			table[i] = malloc(table_w * sizeof(char));
 
 		printf("[NOTE] Using tablefile %s\n",  tablefile_name);
 		tablefile = fopen(tablefile_name, "r");
@@ -126,12 +124,12 @@ int main(int argc, uchar **argv)
 		TOERR("[ERROR] No message specified.  Bailing out!\n");
 		exit(1);
 	} else {
-		msg = calloc(strlen(argv[optind])+2, sizeof(uchar));
+		msg = calloc(strlen(argv[optind])+2, sizeof(char));
 		strcpy(msg, argv[optind]);
 	}
 
 	/* Done parsing options */
-	ans = calloc(strlen(msg)+4, sizeof(uchar));
+	ans = calloc(strlen(msg)+4, sizeof(char));
 
 	if (strlen(msg) % 2) {
 		TOERR("[WARN] Message length is odd.  Appending 'X'.\n");
@@ -141,14 +139,14 @@ int main(int argc, uchar **argv)
 	reftable = malloc(table_h * table_w * sizeof(struct pair));
 	for (int i = 0; i < table_h; i++) {
 		for (int j = 0; j < table_w; j++)
-			reftable[table[i][j]-lowestuchar] = (struct pair){i, j};
+			reftable[table[i][j]-lowestchar] = (struct pair){i, j};
 	}
 
 	for (size_t i = 0; i+1 < strlen(msg); i += 2) {
 		if (encode)
-			encrypt(&ans, table, reftable[msg[i]-lowestuchar], reftable[msg[i+1]-lowestchar]);
+			encrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 		else
-			decrypt(&ans, table, reftable[msg[i]-lowestuchar], reftable[msg[i+1]-lowestchar]);
+			decrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 	}
 
 	if (ans[strlen(ans)-1] == ' ' && encode) {
@@ -168,67 +166,67 @@ int main(int argc, uchar **argv)
 	return 0;
 }
 
-void encrypt(uchar **result, char **table, struct pair firstletter, struct pair secondletter)
+void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter)
 {
 	if (firstletter.first == secondletter.first) { /* Same row */
 		if (firstletter.second == table_w-1) /* Wrap */
-			strcat(*result, (uchar[2]){table[firstletter.first][0], '\0'});
+			strcat(*result, (char[2]){table[firstletter.first][0], '\0'});
 		else
-			strcat(*result, (uchar[2]){table[firstletter.first]
+			strcat(*result, (char[2]){table[firstletter.first]
 					[firstletter.second+1], '\0'});
 		if (secondletter.second == table_w-1) /* Wrap */
-			strcat(*result, (uchar[2]){table[secondletter.first][0], '\0'});
+			strcat(*result, (char[2]){table[secondletter.first][0], '\0'});
 		else
-			strcat(*result, (uchar[2]){table[secondletter.first]
+			strcat(*result, (char[2]){table[secondletter.first]
 					[secondletter.second+1], '\0'});
 	} else if (firstletter.second == secondletter.second) { /* Same column */
 		if (firstletter.first == table_h-1) /* Wrap */
-			strcat(*result, (uchar[2]){table[0][firstletter.second], '\0'});
+			strcat(*result, (char[2]){table[0][firstletter.second], '\0'});
 		else
-			strcat(*result, (uchar[2]){table[firstletter.first+1]
+			strcat(*result, (char[2]){table[firstletter.first+1]
 					[firstletter.second], '\0'});
 		if (secondletter.first == table_h-1) /* Wrap */
-			strcat(*result, (uchar[2]){table[0][secondletter.second], '\0'});
+			strcat(*result, (char[2]){table[0][secondletter.second], '\0'});
 		else
-			strcat(*result, (uchar[2]){table[secondletter.first+1]
+			strcat(*result, (char[2]){table[secondletter.first+1]
 					[secondletter.second], '\0'});
 	} else { /* Normal case */
-		strcat(*result, (uchar[2]){table [firstletter.first]
+		strcat(*result, (char[2]){table [firstletter.first]
 				[secondletter.second], '\0'});
-		strcat(*result, (uchar[2]){table [secondletter.first]
+		strcat(*result, (char[2]){table [secondletter.first]
 				[firstletter.second], '\0'});
 	}
 }
 
 
-void decrypt(uchar **result, char **table, struct pair firstletter, struct pair secondletter)
+void decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter)
 {
 	if (firstletter.first == secondletter.first) { /* Same row */
 		if (firstletter.second == 0) /* Wrap */
-			strcat(*result, (uchar[2]){table[firstletter.first][table_w-1], '\0'});
+			strcat(*result, (char[2]){table[firstletter.first][table_w-1], '\0'});
 		else
-			strcat(*result, (uchar[2]){table[firstletter.first]
+			strcat(*result, (char[2]){table[firstletter.first]
 					[firstletter.second-1], '\0'});
 		if (secondletter.second == 0) /* Wrap */
-			strcat(*result, (uchar[2]){table[secondletter.first][table_w-1], '\0'});
+			strcat(*result, (char[2]){table[secondletter.first][table_w-1], '\0'});
 		else
-			strcat(*result, (uchar[2]){table [secondletter.first]
+			strcat(*result, (char[2]){table [secondletter.first]
 					[secondletter.second-1], '\0'});
 	} else if (firstletter.second == secondletter.second) { /* Same column */
 		if (firstletter.first == 0) /* Wrap */
-			strcat(*result, (uchar[2]){table[table_h-1][firstletter.second], '\0'});
+			strcat(*result, (char[2]){table[table_h-1][firstletter.second], '\0'});
 		else
-			strcat(*result, (uchar[2]){table[firstletter.first-1]
+			strcat(*result, (char[2]){table[firstletter.first-1]
 					[firstletter.second], '\0'});
 		if (secondletter.first == 0) /* Wrap */
-			strcat(*result, (uchar[2]){table[table_h-1][secondletter.second], '\0'});
+			strcat(*result, (char[2]){table[table_h-1][secondletter.second], '\0'});
 		else
-			strcat(*result, (uchar[2]){table[secondletter.first-1]
+			strcat(*result, (char[2]){table[secondletter.first-1]
 					[secondletter.second], '\0'});
 	} else { /* Normal case */
-		strcat(*result, (uchar[2]){table [firstletter.first]
+		strcat(*result, (char[2]){table [firstletter.first]
 				[secondletter.second], '\0'});
-		strcat(*result, (uchar[2]){table [secondletter.first]
+		strcat(*result, (char[2]){table [secondletter.first]
 				[firstletter.second], '\0'});
 	}
 }
