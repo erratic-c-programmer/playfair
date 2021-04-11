@@ -15,8 +15,8 @@ struct pair {
 
 static short int table_w = 12, table_h = 8;
 
-void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
-void decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
+void pf_encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
+void pf_decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter);
 
 int main(int argc, char **argv)
 {
@@ -144,9 +144,9 @@ int main(int argc, char **argv)
 
 	for (size_t i = 0; i+1 < strlen(msg); i += 2) {
 		if (encode)
-			encrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
+			pf_encrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 		else
-			decrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
+			pf_decrypt(&ans, table, reftable[msg[i]-lowestchar], reftable[msg[i+1]-lowestchar]);
 	}
 
 	if (ans[strlen(ans)-1] == ' ' && encode) {
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter)
+void pf_encrypt(char **result, char **table, struct pair firstletter, struct pair secondletter)
 {
 	if (firstletter.first == secondletter.first) { /* Same row */
 		if (firstletter.second == table_w-1) /* Wrap */
@@ -199,7 +199,7 @@ void encrypt(char **result, char **table, struct pair firstletter, struct pair s
 }
 
 
-void decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter)
+void pf_decrypt(char **result, char **table, struct pair firstletter, struct pair secondletter)
 {
 	if (firstletter.first == secondletter.first) { /* Same row */
 		if (firstletter.second == 0) /* Wrap */
